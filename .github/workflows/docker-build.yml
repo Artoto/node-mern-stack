@@ -3,9 +3,9 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main # หรือ branch ที่คุณต้องการให้ trigger
+      - main
     tags:
-      - "v*.*.*" # Trigger เมื่อมีการสร้าง Tag เวอร์ชัน (เช่น v1.0.0)
+      - "v*.*.*"
 
 jobs:
   build-and-push:
@@ -20,9 +20,21 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # เปลี่ยน 'your-dockerhub-username/node-mern-stack-arthit' เป็นชื่อ Image ที่สมบูรณ์ของคุณ
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}} # Tag 'latest' สำหรับ main branch
+            type=semver,pattern={{version}} # Tag ตาม version จาก Git Tag (เช่น v1.0.0 -> 1.0.0)
+            type=sha,format=short # Tag ด้วย commit SHA
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: . # ใช้ Context จาก root directory
+          context: .
           push: true
-          tage: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
+          tags: ${{ steps.meta.outputs.tags }} # ใช้ Tags ที่สร้างโดย metadata-action
+          labels: ${{ steps.meta.outputs.labels }} # ใช้ Labels ที่สร้างโดย metadata-action
