@@ -23,8 +23,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          # Build using the backend folder and explicit Dockerfile
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: . # ใช้ Context จาก root directory
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
+          tage: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
