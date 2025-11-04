@@ -25,4 +25,4 @@ jobs:
         with:
           context: . # ใช้ Context จาก root directory
           push: true
-          tage: ${{ secrets.DOCKERHUB_USERNAME }}}}/node-mern-stack-arthit:latest
+          tage: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
