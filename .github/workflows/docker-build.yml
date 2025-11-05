@@ -27,9 +27,8 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
-      - name: Run AWS CLI Command (Example: Docker Pull from ECR)
-        run: 
-          echo "Attempting to pull image from ECR..."
+      - name: Run AWS CLI Command
+        run: echo "Attempting to pull image from ECR..."
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
           echo "Docker pull successful."
           sudo docker stop mern-stack-node
