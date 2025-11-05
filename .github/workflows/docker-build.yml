@@ -31,7 +31,7 @@ jobs:
   deploy_to_aws:
     name: Deploy to AWS Self-Hosted Runner
     needs: build_and_push
-    runs-on: self-hosted
+    runs-on: [self-hosted, Linux, X64]
     environment: production
     steps:
       - name: Pull latest image from Docker Hub
