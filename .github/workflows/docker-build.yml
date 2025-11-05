@@ -27,13 +27,27 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
-      - name: Run AWS CLI Command
-        run: echo "Attempting to pull image from ECR..."
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
-          echo "Docker pull successful."
-          sudo docker stop mern-stack-node
-          echo "Docker stop successful."
-          sudo docker rmi mern-stack-node
-          echo "Docker delete successful."
-          sudo docker run -d -p 5000:5000 -e MONGODB_URI=${{ secrets.MONGODB_URI }} -e BASE_PORT=${{ secrets.BASE_PORT }} -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} --name mern-stack-node node-mern-stack-arthit
-          echo "Docker run container successful."
+
+  deploy_to_aws:
+    name: Deploy to AWS Self-Hosted Runner
+    needs: build_and_push
+    runs-on: self-hosted
+    environment: production
+    steps:
+      - name: Pull latest image from Docker Hub
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop mern-stack-node || true
+          docker rm mern-stack-node || true
+
+      - name: Run new container
+        run: |
+          docker run -d -p 5000:5000 \
+            -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
+            -e BASE_PORT=${{ secrets.BASE_PORT }} \
+            -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            --name mern-stack-node \
+            ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
