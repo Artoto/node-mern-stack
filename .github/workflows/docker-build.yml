@@ -9,6 +9,8 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,3 +27,14 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
+      - name: Run AWS CLI Command (Example: Docker Pull from ECR)
+        run: |
+          echo "Attempting to pull image from ECR..."
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/node-mern-stack-arthit:latest
+          echo "Docker pull successful."
+          sudo docker stop mern-stack-node
+          echo "Docker stop successful."
+          sudo docker rmi mern-stack-node
+          echo "Docker delete successful."
+          sudo docker run -d -p 5000:5000 -e MONGODB_URI=${{ secrets.MONGODB_URI }} -e BASE_PORT=${{ secrets.BASE_PORT }} -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} --name mern-stack-node node-mern-stack-arthit
+          echo "Docker run container successful."
