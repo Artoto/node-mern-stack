@@ -10,7 +10,7 @@ dotenv.config();
 app.use(express.json());
 connectionDB();
 
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://3.26.243.201:3000"];
 
 const corsOptions = {
   origin: function (origin, callback) {
